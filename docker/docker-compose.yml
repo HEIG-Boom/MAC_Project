@@ -1,0 +1,23 @@
+version: '3.7'
+
+services:
+  # Arango DB
+  db:
+    image: arangodb:2.8.11
+    container_name: bot-db
+    restart: on-failure
+    environment:
+      ARANGO_RANDOM_ROOT_PASSWORD: 1
+
+  # Python bot app
+  app:
+    image: tvshows-bot
+    container_name: bot-app
+    build: ../src
+    command: python bot_app.py
+    ports:
+      - 9706:9706
+    volumes:
+      - ../src:/tvshows-bot
+    depends_on:
+      - db
