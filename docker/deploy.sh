@@ -1,9 +1,5 @@
 echo "----- Deploying -----"
 
-# Check for needed software
-echo "----- Download openssh -----"
-apt-get install openssh
-
 # SSH config
 echo "----- SSH Config -----"
 mkdir -p ~/.ssh
@@ -17,6 +13,7 @@ chmod 644 ~/.ssh/known_hosts
 
 # Commands in remote host
 echo "----- Setup vars, run updated containers -----"
+echo $PROD_SERVER_PRIVATE_KEY
 ssh -T $PROD_SERVER_USER@$PROD_HOSTNAME << EOF
     cd /MACBot
 
