@@ -10,6 +10,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- bash: './docker/deploy.sh'
-  displayName: 'Deploy on DigitalOcean Droplet'
-  
+- task: Bash@3
+  inputs:
+    filePath: './docker/deploy.sh'
+    displayName: 'Deploy on DigitalOcean Droplet'
