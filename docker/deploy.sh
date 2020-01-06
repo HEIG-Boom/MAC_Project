@@ -14,6 +14,8 @@ chmod 644 ~/.ssh/known_hosts
 # Commands in remote host
 echo "----- Setup vars, run updated containers -----"
 echo $PROD_SERVER_PRIVATE_KEY
+echo $PROD_SERVER_USER
+echo $PROD_HOSTNAME
 ssh -T $PROD_SERVER_USER@$PROD_HOSTNAME << EOF
     cd /MACBot
 
