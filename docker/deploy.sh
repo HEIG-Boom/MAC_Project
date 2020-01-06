@@ -13,10 +13,7 @@ chmod 644 ~/.ssh/known_hosts
 
 # Commands in remote host
 echo "----- Setup vars, run updated containers -----"
-echo $PROD_SERVER_PRIVATE_KEY
-echo $PROD_SERVER_USER
-echo $PROD_HOSTNAME
-ssh -T $PROD_SERVER_USER@$PROD_HOSTNAME << EOF
+ssh -vvvT $PROD_SERVER_USER@$PROD_HOSTNAME << EOF
     cd /MACBot
 
     # Update sources
@@ -24,5 +21,5 @@ ssh -T $PROD_SERVER_USER@$PROD_HOSTNAME << EOF
 
     # Update containers with minimal downtime
     docker-compose down
-	  docker-compose up --build -d
+    docker-compose up --build -d
 EOF
