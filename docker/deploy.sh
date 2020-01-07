@@ -1,7 +1,7 @@
 echo "----- Deploying -----"
 # Commands in remote host
 echo "----- Setup vars, run updated containers -----"
-cd /MACBot
+cd /MACBot/docker
 
 # Update sources
 git pull origin master
