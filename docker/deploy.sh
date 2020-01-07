@@ -7,5 +7,5 @@ cd /MACBot/docker
 git pull origin master
 
 # Update containers with minimal downtime
-dockr-compose down
+docker-compose down
 docker-compose up --build -d
