@@ -10,6 +10,14 @@ Plus précisément, chaque utilisateur pourra sélectionner les séries qui l'in
 
 Ces interactions seront faites via un bot Telegram. Plusieurs commandes permettront d'interagir avec la base de données des séries.
 
+## Utiliser le bot
+
+Dans Telegram, chercher le bot `@MacBotBotMacBot`, et lancer une conversation.
+
+Les commandes suivantes sont alors utilisables :
+
+- ...
+
 ## Setup pour le développement
 
 1. Créer un bot à l'aide du BotFather et copier l'API Token.
@@ -17,3 +25,9 @@ Ces interactions seront faites via un bot Telegram. Plusieurs commandes permettr
 3. Écrire dans ce fichier `TELEGRAM_TOKEN=<le token récupéré>`.
 4. Se positionner dans le dossier `docker` et utiliser la commande `docker-compose up --build -d`.
 5. Le bot est maintenant "en ligne".
+
+## Déploiement
+
+Azure pipelines s'occupe de mettre à jour le code sur le serveur distant, afin de s'assurer que le bot de production soit toujours disponible.
+
+Le pipeline est composé d'un simple job qui exécute le script `docker/deploy.sh` sur la machine distante, redémarrant ainsi les containers qui servent l'application.
