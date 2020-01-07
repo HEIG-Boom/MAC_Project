@@ -14,6 +14,7 @@ services:
     image: tvshows-bot
     container_name: bot-app
     build: ../src
+    env_file: env-file
     command: python bot_app.py
     ports:
       - 9706:9706
