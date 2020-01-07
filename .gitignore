@@ -1,6 +1,8 @@
-
 # Created by https://www.gitignore.io/api/venv,python
 # Edit at https://www.gitignore.io/?templates=venv,python
+
+# App
+env-file
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
