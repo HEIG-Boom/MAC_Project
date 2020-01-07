@@ -16,3 +16,4 @@ steps:
     sshEndpoint: 'DigitalOcean Droplet'
     runOptions: 'script'
     scriptPath: 'docker/deploy.sh'
+    failOnStdErr: false
