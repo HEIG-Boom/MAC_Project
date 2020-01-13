@@ -8,7 +8,7 @@ import logging
 import os
 
 from telegram.ext import Updater, CommandHandler
-from commands.bot import start
+from commands.bot import start, help
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
