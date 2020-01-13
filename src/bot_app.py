@@ -8,7 +8,7 @@ import logging
 import os
 
 from telegram.ext import Updater, CommandHandler
-from commands.bot import start, help
+from commands.bot import start, help_handle
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -25,7 +25,7 @@ def main():
 
     # On different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(CommandHandler("help", help))
+    dp.add_handler(CommandHandler("help", help_handle))
 
     # Log all errors
     dp.add_error_handler(error)

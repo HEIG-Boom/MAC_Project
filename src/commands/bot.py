@@ -15,5 +15,13 @@ def start(update, context):
     )
 
 
-def help(update, context):
-    update.message.reply_text('coming soon...')
+def help_handle(update, context):
+    update.message.reply_text(
+        'Here is the list of possible commands\n\n'
+        '*General* 🐒\n'
+        '/start - start the bot\n'
+        '/help - get info on how to use the bot\n\n'
+        '*TV shows* 🎬\n'
+        'Coming soon...',
+        parse_mode=telegram.ParseMode.MARKDOWN
+    )
