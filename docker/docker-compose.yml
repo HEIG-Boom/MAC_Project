@@ -3,11 +3,13 @@ version: '3.7'
 services:
   # Arango DB
   db:
-    image: arangodb:2.8.11
+    image: arangodb:3.6.0
     container_name: bot-db
     restart: on-failure
     environment:
-      ARANGO_RANDOM_ROOT_PASSWORD: 1
+      ARANGO_NO_AUTH: 1
+    ports:
+      - 8529:8529
 
   # Python bot app
   app:
