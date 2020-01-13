@@ -8,6 +8,7 @@ import logging
 import os
 
 from telegram.ext import Updater, CommandHandler
+from commands.bot import start
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -24,7 +25,7 @@ def main():
 
     # On different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(CommandHandler("help", start))
+    dp.add_handler(CommandHandler("help", help))
 
     # Log all errors
     dp.add_error_handler(error)
@@ -41,12 +42,6 @@ def main():
 def error(update, context):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, context.error)
-
-
-# Define a few command handlers. These usually take the two arguments update and
-# context. Error handlers also receive the raised TelegramError object in error.
-def start(update, context):
-    update.message.reply_text('Hi !')
 
 
 if __name__ == '__main__':
