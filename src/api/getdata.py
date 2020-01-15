@@ -4,6 +4,7 @@
 Provides functions to retrieve data from RapidAPI's movie-database-imdb-alternative
 """
 import os
+import json
 import requests
 
 # Constant values used for requests
@@ -15,8 +16,14 @@ headers = {
 
 
 def get_series_by_name(search):
-    querystring = {"page": "1", "r": "json", "type": "series", "s": "sherlock"}
+    """Execute a GET request using the given search term and return a dict"""
+    querystring = {"page": "1", "r": "json", "type": "series", "s": search}
 
     response = requests.request("GET", url, headers=headers, params=querystring)
 
-    return response.text
+    return json.loads(response.text)
+
+
+def format_series(series):
+    """Format a python dict into a readable format"""
+    return series
