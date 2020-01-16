@@ -23,3 +23,12 @@ def get_series_by_name(search):
     response = requests.request("GET", API_URL, headers=HEADERS, params=querystring)
 
     return json.loads(response.text)
+
+
+def get_series_by_id(id):
+    """Execute a GET request to search for a specific show's detailed information"""
+    querystring = {"i": id, "r": "json"}
+
+    response = requests.request("GET", API_URL, headers=HEADERS, params=querystring)
+
+    return json.loads(response.text)
