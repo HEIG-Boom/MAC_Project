@@ -23,8 +23,3 @@ def get_series_by_name(search):
     response = requests.request("GET", API_URL, headers=HEADERS, params=querystring)
 
     return json.loads(response.text)
-
-
-def format_series(series):
-    """Format a python dict into a readable format"""
-    return series

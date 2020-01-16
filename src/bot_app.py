@@ -7,9 +7,9 @@ Different actions are possible to interact with the tv shows database.
 import logging
 import os
 
-from telegram.ext import Updater, CommandHandler
+from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 from commands.bot import start, help_handle
-from commands.tvshows import search_series
+from commands.tvshows import search_series, handle_button
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 def main():
-    """Run the bot"""
+    """Run the bot, define the command handlers"""
     # Create the Updater and pass it the bot's TOKEN.
     updater = Updater(os.getenv('TELEGRAM_TOKEN'), use_context=True)
 
@@ -28,6 +28,9 @@ def main():
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", help_handle))
     dp.add_handler(CommandHandler("search", search_series, pass_args=True))
+
+    # Handle the response coming from a menu button
+    dp.add_handler(CallbackQueryHandler(handle_button))
 
     # Log all errors
     dp.add_error_handler(error)
