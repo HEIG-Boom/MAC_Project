@@ -1,3 +1,4 @@
+import os
 from pyArango.connection import *
 from pyArango.theExceptions import DocumentNotFoundError
 
@@ -10,7 +11,7 @@ class Database(object):
         """Initializes the data connection"""
         database_name = "teleshows"
 
-        conn = Connection()
+        conn = Connection(os.getenv('DB_HOST', 'localhost:8529'))
         if not conn.hasDatabase(database_name):
             self.db = conn.createDatabase(name=database_name)
             self.db = conn[database_name]

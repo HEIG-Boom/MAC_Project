@@ -1,8 +1,9 @@
 class Singleton:
     def __init__(self, cls):
         self._cls = cls
+        self._instance = None
 
-    def Instance(self):
+    def instance(self):
         try:
             return self._instance
         except AttributeError:

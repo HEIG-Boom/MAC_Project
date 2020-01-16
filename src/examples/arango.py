@@ -15,7 +15,7 @@ print(doc)
 
 doc2 = studentsCollection.createDocument()
 doc2["firstname"] = "Emily"
-doc2["lasname"] = "Bronte"
+doc2["lastname"] = "Bronte"
 print(doc2)
 
 doc._key = "johnsmith"
