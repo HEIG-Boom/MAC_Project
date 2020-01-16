@@ -1,7 +1,6 @@
 class Singleton:
     def __init__(self, cls):
         self._cls = cls
-        self._instance = None
 
     def instance(self):
         try:
