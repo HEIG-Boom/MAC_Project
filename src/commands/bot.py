@@ -13,7 +13,7 @@ def start(update, context):
     # Store telegram user in the database
     user_id = update.message.chat.id
     username = update.message.chat.username
-    db = Database.Instance()
+    db = Database.instance()
     db.add_user(user_id, username)
 
     update.message.reply_text(
