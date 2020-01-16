@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 def main():
-    """Run the bot."""
+    """Run the bot"""
     # Create the Updater and pass it the bot's TOKEN.
     updater = Updater(os.getenv('TELEGRAM_TOKEN'), use_context=True)
 
