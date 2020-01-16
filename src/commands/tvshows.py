@@ -3,7 +3,7 @@
 """
 Handles all commands related to the manipulation of TV shows data
 """
-from api.getdata import get_series_by_name, format_series
+from data.getdata import get_series_by_name, format_series
 
 
 def search_series(update, context):

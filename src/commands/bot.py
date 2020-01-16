@@ -4,11 +4,18 @@
 Handles all commands directly related to the bot as 'help', 'start', commands.
 """
 import telegram
+from data.database import Database
 
 
 # Define a few command handlers. These usually take the two arguments update and
 # context. Error handlers also receive the raised TelegramError object in error.
 def start(update, context):
+    # Store telegram user in the database
+    user_id = update.message.chat.id
+    username = update.message.chat.username
+    db = Database.Instance()
+    db.add_user(user_id, username)
+
     update.message.reply_text(
         'Hi 👋\n\nI\'m the bot that keeps track of your viewing history. You can search for a show you\'re '
         'interested in and keep track of the episodes. For more info, type /help for the command list.',
