@@ -3,8 +3,9 @@
 """
 Handles all commands related to the manipulation of TV shows data
 """
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-from data.movieapi import get_series_by_name
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ParseMode
+from data.series_api import get_series_by_name, get_series_by_id
+from data.database import Database
 from commands.utils import build_menu
 
 
@@ -45,4 +46,14 @@ def handle_button(update, context):
     if query.data == "cancel":
         query.edit_message_text(text="Canceled")
     else:
-        query.edit_message_text(text="Selected option: {}".format(query.data))
+        # Get details about the series
+        show_details = get_series_by_id(query.data)
+
+        db = Database.instance()
+        # TODO store more information!!
+        db.add_series(show_details["imdbID"], show_details["Title"], show_details["Year"], show_details["Poster"])
+        #TODO Add follows edge
+
+        # Send success message
+        text = "You are now following *{}*[.]({})".format(show_details["Title"], show_details["Poster"])
+        query.edit_message_text(text, parse_mode=ParseMode.MARKDOWN)
