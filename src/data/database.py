@@ -11,7 +11,7 @@ class Database(object):
         """Initializes the data connection"""
         database_name = "teleshows"
 
-        conn = Connection(os.getenv('DB_HOST', 'localhost:8529'))
+        conn = Connection(os.getenv('DB_HOST', 'http://127.0.0.1:8529'))
         if not conn.hasDatabase(database_name):
             self.db = conn.createDatabase(name=database_name)
             self.db = conn[database_name]
