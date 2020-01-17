@@ -30,5 +30,6 @@ def help_handle(update, context):
         '/help - get info on how to use the bot\n\n'
         '*TV shows* 🎬\n'
         '/follow <term> - Search series that contain the given term\n',
+        '/followed - Display the shows you follow\n',
         parse_mode=telegram.ParseMode.MARKDOWN
     )

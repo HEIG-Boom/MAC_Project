@@ -27,27 +27,27 @@ class Database(object):
         # Create database if it doesn't exist
         if not conn.hasDatabase(db_name):
             conn.createDatabase(name=db_name)
-            db = conn[db_name]
+            self.db = conn[db_name]
         else:
-            db = conn[db_name]
+            self.db = conn[db_name]
 
         # Create vertices and edges collections if they don't exist
-        if not db.hasCollection("Users"):
-            db.createCollection(name="Users", className='Collection')
-        if not db.hasCollection("Series"):
-            db.createCollection(name="Series", className='Collection')
-        if not db.hasCollection("Follows"):
-            db.createCollection(name="Follows", className='Edges')
+        if not self.db.hasCollection("Users"):
+            self.db.createCollection(name="Users", className='Collection')
+        if not self.db.hasCollection("Series"):
+            self.db.createCollection(name="Series", className='Collection')
+        if not self.db.hasCollection("Follows"):
+            self.db.createCollection(name="Follows", className='Edges')
 
         # Create the graph
-        if not db.hasGraph("SeriesGraph"):
-            self.graph = db.createGraph("SeriesGraph")
+        if not self.db.hasGraph("SeriesGraph"):
+            self.graph = self.db.createGraph("SeriesGraph")
         else:
-            self.graph = db.graphs['SeriesGraph']
+            self.graph = self.db.graphs['SeriesGraph']
 
-        self.users_col = db['Users']
-        self.series_col = db['Series']
-        self.follows_edges = db['Follows']
+        self.users_col = self.db['Users']
+        self.series_col = self.db['Series']
+        self.follows_edges = self.db['Follows']
 
     def add_user(self, telegram_id, telegram_username):
         """Add the telegram user in the database"""
@@ -86,6 +86,15 @@ class Database(object):
     def follow_series(self, user, series):
         # TODO Check if the link already exists !
         self.graph.link('Follows', user, series, {"start_date": date.today()})
+
+    def followed_series(self, user_id):
+        user = self.users_col[user_id]
+        print(user)
+
+        aql = "FOR show IN Series FOR follow IN Follows FILTER follow.`_from` == \"{}\" AND follow.`_to` == show.`_id` RETURN show".format(user._id)
+        results = self.db.AQLQuery(aql, rawResults=False, batchSize=100)
+        return results
+
 
     def __str__(self):
         return 'Database connection object'
