@@ -47,7 +47,7 @@ def followed_series(update, context):
     series = db.followed_series(user_id)
 
     button_list = [InlineKeyboardButton("{} ({})".format(show["title"], show["year"]),
-                                        callback_data=show["_key"]) for show in series]
+                                        callback_data="ww" + show["_key"]) for show in series]
     # Create button menu
     reply_markup = InlineKeyboardMarkup(build_menu(button_list, 1))
 
@@ -72,6 +72,26 @@ def handle_series(update, context):
                                                                                         show_details["Year"],
                                                                                         show_details["Plot"],
                                                                                         show_details["Actors"])
+    query.edit_message_text(new_text, parse_mode=ParseMode.MARKDOWN, reply_markup=reply_markup)
+
+
+def handle_watched(update, context):
+    """Handle responses from the user when he choose one of the followed show"""
+    query = update.callback_query
+    series_id = query.data[2:]
+
+    # Get details about the series
+    db = Database.instance()
+    series = db.get_show_by_id(series_id)
+
+    # Create button menu
+    button_list = [InlineKeyboardButton("I've seen a episode", callback_data="cancel")]
+    reply_markup = InlineKeyboardMarkup(build_menu(button_list, 1))
+
+    # Edit message text and ask user to choose a show
+    # TODO add all info in our arango DB (plot, actors, ...) and print it
+    new_text = "*{}* - {}".format(series["title"],
+                                  series["year"])
     query.edit_message_text(new_text, parse_mode=ParseMode.MARKDOWN, reply_markup=reply_markup)
 
 
