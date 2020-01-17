@@ -18,7 +18,7 @@ services:
     image: tvshows-bot
     container_name: bot-app
     build: ../src
-    env_file: env-file
+    env_file: .env
     command: python bot_app.py
     depends_on:
       - db

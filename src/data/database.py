@@ -9,6 +9,7 @@ from decorators.singleton import Singleton
 from datetime import date
 from data.graph import SeriesGraph
 
+# Database constants
 DB_URL = os.getenv("DB_HOST", "http://127.0.0.1:8529")
 DB_PWD = os.getenv("ARANGO_PWD", "password")
 

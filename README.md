@@ -25,13 +25,12 @@ Les commandes suivantes sont alors utilisables (aide disponible avec la commande
 
 1. Créer un bot à l'aide du BotFather et copier l'API Token.
 2. Nous utilisons [cette API](https://rapidapi.com/imdb/api/movie-database-imdb-alternative/endpoints) afin de livrer des données riches et actuelles aux utilisateurs.
-2. Créer un fichier `env-file` dans le dossier `docker`.
+2. Créer un fichier `.env` dans le dossier `docker`.
 3. Remplir ce fichier avec les variables nécessaires au fonctionnement du bot :
     - `TELEGRAM_TOKEN=<le token récupéré>`
     - `SERIES_API_TOKEN=<votre token pour l'api de séries>`
     - `DB_HOST=http://db:8529`
     - `ARANGO_PWD=<votre mot de passe root pour la donnée>`
-4. Mettre ces variables dans l'environnement avec `source env-file`.
 4. Se positionner dans le dossier `docker` et utiliser la commande `docker-compose up --build -d`.
 5. Le bot est maintenant "en ligne".
 
