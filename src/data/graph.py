@@ -1,3 +1,8 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+Graph definition
+"""
 from pyArango.graph import Graph, EdgeDefinition
 from pyArango.collection import Collection, Field, Edges
 

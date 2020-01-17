@@ -34,32 +34,59 @@ def search_series(update, context):
             reply_markup = InlineKeyboardMarkup(build_menu(button_list, 1))
 
             # Ask user to choose a show
-            update.message.reply_text('Do you want to follow one of these series?', reply_markup=reply_markup)
+            update.message.reply_text("Do you want to follow one of these series?", reply_markup=reply_markup)
     else:
         update.message.reply_text("Please provide a search term to the command.")
 
 
-def handle_button(update, context):
+def handle_series(update, context):
     """Handle responses from the user when clicking menu buttons"""
     query = update.callback_query
 
-    if query.data == "cancel":
-        query.edit_message_text(text="Canceled")
-    else:
-        # Get details about the series
-        show_details = get_series_by_id(query.data)
+    # Get details about the series
+    show_details = get_series_by_id(query.data)
 
-        db = Database.instance()
-        # Create the series document
-        series = db.add_series(show_details["imdbID"], show_details["Title"], show_details["Year"], show_details["Poster"])
+    # Create button menu
+    button_list = [InlineKeyboardButton("Do it!", callback_data="vv" + query.data),
+                   InlineKeyboardButton("No", callback_data="cancel")]
+    reply_markup = InlineKeyboardMarkup(build_menu(button_list, 2))
 
-        # Get the user document
-        user_id = update.callback_query.message.chat.id
-        user = db.users_col[user_id]
+    # Edit message text and ask user to choose a show
+    new_text = "Is this the series you're looking for?\n\n*{}* - {}\n\n{}\n\n{}".format(show_details["Title"],
+                                                                                        show_details["Year"],
+                                                                                        show_details["Plot"],
+                                                                                        show_details["Actors"])
+    query.edit_message_text(new_text, parse_mode=ParseMode.MARKDOWN, reply_markup=reply_markup)
 
-        # Create an edge between the documents
-        db.follow_series(user, series)
 
-        # Send success message
-        text = "You are now following *{}*[.]({})".format(show_details["Title"], show_details["Poster"])
-        query.edit_message_text(text, parse_mode=ParseMode.MARKDOWN)
+def handle_cancel(update, context):
+    """Handle button response to cancel operation"""
+    query = update.callback_query
+    query.edit_message_text(text="Operation cancelled!")
+
+
+def handle_validate(update, context):
+    """Handle the validation action by creating the series and the edge"""
+    query = update.callback_query
+
+    series_id = query.data[2:]
+    show_details = get_series_by_id(series_id)
+
+    db = Database.instance()
+    # Create the series document
+    # TODO Add more data
+    series = db.add_series(show_details["imdbID"],
+                           show_details["Title"],
+                           show_details["Year"],
+                           show_details["Poster"])
+
+    # Get the user document
+    user_id = update.callback_query.message.chat.id
+    user = db.users_col[user_id]
+
+    # Create an edge between the documents
+    db.follow_series(user, series)
+
+    # Send success message
+    text = "You are now following *{}*[.]({})".format(show_details["Title"], show_details["Poster"])
+    query.edit_message_text(text, parse_mode=ParseMode.MARKDOWN)

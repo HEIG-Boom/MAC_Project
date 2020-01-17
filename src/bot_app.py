@@ -9,7 +9,7 @@ import os
 
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 from commands.bot import start, help_handle
-from commands.tvshows import search_series, handle_button
+from commands.tvshows import search_series, handle_series, handle_cancel, handle_validate
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -27,10 +27,12 @@ def main():
     # On different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", help_handle))
-    dp.add_handler(CommandHandler("search", search_series, pass_args=True))
+    dp.add_handler(CommandHandler("follow", search_series, pass_args=True))
 
     # Handle the response coming from a menu button
-    dp.add_handler(CallbackQueryHandler(handle_button))
+    dp.add_handler(CallbackQueryHandler(handle_series, pattern="^tt.*$"))
+    dp.add_handler(CallbackQueryHandler(handle_validate, pattern="^vv.*$"))
+    dp.add_handler(CallbackQueryHandler(handle_cancel, pattern="^cancel$"))
 
     # Log all errors
     dp.add_error_handler(error)
