@@ -5,8 +5,9 @@ Database class allowing to initialize the connection and execute operations easi
 """
 import os
 from pyArango.connection import *
-from pyArango.theExceptions import DocumentNotFoundError
 from decorators.singleton import Singleton
+from datetime import date
+from data.graph import SeriesGraph
 
 
 @Singleton
@@ -33,6 +34,12 @@ class Database(object):
             db.createCollection(name="Series", className='Collection')
         if not db.hasCollection("Follows"):
             db.createCollection(name="Follows", className='Edges')
+
+        # Create the graph
+        if not db.hasGraph("SeriesGraph"):
+            self.graph = db.createGraph("SeriesGraph")
+        else:
+            self.graph = db.graphs['SeriesGraph']
 
         self.users_col = db['Users']
         self.series_col = db['Series']
@@ -68,6 +75,13 @@ class Database(object):
                 "poster_url": poster_url
             })
             series.save()
+        else:
+            series = self.series_col[imdb_id]
+        return series
+
+    def follow_series(self, user, series):
+        # TODO Check if the link already exists !
+        self.graph.link('Follows', user, series, {"start_date": date.today()})
 
     def __str__(self):
         return 'Database connection object'

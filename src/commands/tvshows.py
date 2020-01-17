@@ -50,9 +50,15 @@ def handle_button(update, context):
         show_details = get_series_by_id(query.data)
 
         db = Database.instance()
-        # TODO store more information!!
-        db.add_series(show_details["imdbID"], show_details["Title"], show_details["Year"], show_details["Poster"])
-        #TODO Add follows edge
+        # Create the series document
+        series = db.add_series(show_details["imdbID"], show_details["Title"], show_details["Year"], show_details["Poster"])
+
+        # Get the user document
+        user_id = update.callback_query.message.chat.id
+        user = db.users_col[user_id]
+
+        # Create an edge between the documents
+        db.follow_series(user, series)
 
         # Send success message
         text = "You are now following *{}*[.]({})".format(show_details["Title"], show_details["Poster"])
