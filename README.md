@@ -16,8 +16,10 @@ Dans Telegram, chercher le bot `@MacBotBotMacBot`, et lancer une conversation.
 
 Les commandes suivantes sont alors utilisables (aide disponible avec la commande `/help`) :
 
+- /start
 - /help
-- ...
+- /follow
+- /followed
 
 ## Setup pour le développement
 
@@ -28,6 +30,8 @@ Les commandes suivantes sont alors utilisables (aide disponible avec la commande
     - `TELEGRAM_TOKEN=<le token récupéré>`
     - `SERIES_API_TOKEN=<votre token pour l'api de séries>`
     - `DB_HOST=http://db:8529`
+    - `ARANGO_PWD=<votre mot de passe root pour la donnée>`
+4. Mettre ces variables dans l'environnement avec `source env-file`.
 4. Se positionner dans le dossier `docker` et utiliser la commande `docker-compose up --build -d`.
 5. Le bot est maintenant "en ligne".
 

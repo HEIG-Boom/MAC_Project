@@ -9,6 +9,9 @@ from decorators.singleton import Singleton
 from datetime import date
 from data.graph import SeriesGraph
 
+DB_URL = os.getenv("DB_HOST", "http://127.0.0.1:8529")
+DB_PWD = os.getenv("ARANGO_PWD", "password")
+
 
 @Singleton
 class Database(object):
@@ -18,11 +21,11 @@ class Database(object):
         """Initialize the data connection"""
         db_name = "teleshows"
 
-        conn = Connection(os.getenv('DB_HOST', 'http://127.0.0.1:8529'))
+        conn = Connection(DB_URL, username="root", password=DB_PWD)
 
         # Create database if it doesn't exist
         if not conn.hasDatabase(db_name):
-            self.db = conn.createDatabase(name=db_name)
+            conn.createDatabase(name=db_name)
             self.db = conn[db_name]
         else:
             self.db = conn[db_name]
