@@ -25,6 +25,7 @@ def search_series(update, context):
             update.message.reply_text("Oups! {}".format(series["Error"]))
         else:
             series = series["Search"]
+
             # Generate button list
             button_list = [InlineKeyboardButton("{} ({})".format(show["Title"], show["Year"]),
                                                 callback_data=show["imdbID"]) for show in series]
@@ -37,6 +38,21 @@ def search_series(update, context):
             update.message.reply_text("Do you want to follow one of these series?", reply_markup=reply_markup)
     else:
         update.message.reply_text("Please provide a search term to the command.")
+
+
+def followed_series(update, context):
+    user_id = update.message.chat.id
+
+    db = Database.instance()
+    series = db.followed_series(user_id)
+
+    button_list = [InlineKeyboardButton("{} ({})".format(show["title"], show["year"]),
+                                        callback_data=show["_key"]) for show in series]
+    # Create button menu
+    reply_markup = InlineKeyboardMarkup(build_menu(button_list, 1))
+
+    # Ask user to choose a show
+    update.message.reply_text("You are following these series", reply_markup=reply_markup)
 
 
 def handle_series(update, context):
