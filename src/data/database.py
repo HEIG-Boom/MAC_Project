@@ -89,12 +89,10 @@ class Database(object):
 
     def followed_series(self, user_id):
         user = self.users_col[user_id]
-        print(user)
 
         aql = "FOR show IN Series FOR follow IN Follows FILTER follow.`_from` == \"{}\" AND follow.`_to` == show.`_id` RETURN show".format(user._id)
         results = self.db.AQLQuery(aql, rawResults=False, batchSize=100)
         return results
-
 
     def __str__(self):
         return 'Database connection object'
