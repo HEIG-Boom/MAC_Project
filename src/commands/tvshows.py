@@ -52,7 +52,10 @@ def followed_series(update, context):
     reply_markup = InlineKeyboardMarkup(build_menu(button_list, 1))
 
     # Ask user to choose a show
-    update.message.reply_text("You are following these series", reply_markup=reply_markup)
+    if series:
+        update.message.reply_text("You are following these series :", reply_markup=reply_markup)
+    else:
+        update.message.reply_text("It seems that you don't follow any series")
 
 
 def handle_series(update, context):
@@ -85,7 +88,7 @@ def handle_watched(update, context):
     series = db.get_show_by_id(series_id)
 
     # Create button menu
-    button_list = [InlineKeyboardButton("I've seen a episode", callback_data="cancel")]
+    button_list = [InlineKeyboardButton("I've seen a episode", callback_data="insertEpisode")]
     reply_markup = InlineKeyboardMarkup(build_menu(button_list, 1))
 
     # Edit message text and ask user to choose a show
@@ -114,7 +117,8 @@ def handle_validate(update, context):
     series = db.add_series(show_details["imdbID"],
                            show_details["Title"],
                            show_details["Year"],
-                           show_details["Poster"])
+                           show_details["Poster"],
+                           show_details["totalSeasons"])
 
     # Get the user document
     user_id = update.callback_query.message.chat.id
@@ -126,3 +130,8 @@ def handle_validate(update, context):
     # Send success message
     text = "You are now following *{}*[.]({})".format(show_details["Title"], show_details["Poster"])
     query.edit_message_text(text, parse_mode=ParseMode.MARKDOWN)
+
+
+def handle_insertion(update, context):
+    query = update.callback_query
+    query.edit_message_text(text="Enter the episode you just see.\n\nPlease respect the format S1E2 (for Season 1 Episode 2).")

@@ -36,8 +36,16 @@ class Database(object):
             self.db.createCollection(name="Users", className='Collection')
         if not self.db.hasCollection("Series"):
             self.db.createCollection(name="Series", className='Collection')
+        if not self.db.hasCollection("Seasons"):
+            self.db.createCollection(name="Seasons", className='Collection')
+        if not self.db.hasCollection("Episodes"):
+            self.db.createCollection(name="Episodes", className='Collection')
         if not self.db.hasCollection("Follows"):
             self.db.createCollection(name="Follows", className='Edges')
+        if not self.db.hasCollection("Includes"):
+            self.db.createCollection(name="Includes", className='Edges')
+        if not self.db.hasCollection("Contains"):
+            self.db.createCollection(name="Contains", className='Edges')
 
         # Create the graph
         if not self.db.hasGraph("SeriesGraph"):
@@ -47,7 +55,11 @@ class Database(object):
 
         self.users_col = self.db['Users']
         self.series_col = self.db['Series']
+        self.seasons_col = self.db['Seasons']
+        self.episodes_col = self.db['Episodes']
         self.follows_edges = self.db['Follows']
+        self.includes_edges = self.db['Includes']
+        self.contains_edges = self.db['Contains']
 
     def add_user(self, telegram_id, telegram_username):
         """Add the telegram user in the database"""
@@ -67,11 +79,11 @@ class Database(object):
             })
             user.save()
 
-    def add_series(self, imdb_id, title, year, poster_url):
+    def add_series(self, imdb_id, title, year, poster_url, nb_season):
         """Add the series in the database"""
         # Check if the series is already in the database
         if imdb_id not in self.series_col:
-            # Create the new user
+            # Create the new show
             series = self.series_col.createDocument({
                 "_key": imdb_id,
                 "title": title,
@@ -79,6 +91,28 @@ class Database(object):
                 "poster_url": poster_url
             })
             series.save()
+
+            # Create all seasons and first episode for each of them
+            for x in range(1, int(nb_season) + 1):
+                season = self.seasons_col.createDocument({
+                    "_key": imdb_id + '.' + str(x),
+                    "description": "Season {} of the '{}' show".format(x, title)
+                })
+                season.save()
+
+                # Link the season with the show
+                self.graph.link('Includes', series, season, {})
+
+                # Create the first episode for the current season
+                episode = self.episodes_col.createDocument({
+                    "_key": season['_key'] + '.1',
+                    "description": "First episode of the season {} of the '{}' show".format(x, title)
+                })
+                episode.save()
+
+                # Link the episode with the season
+                self.graph.link('Contains', season, episode, {})
+
         else:
             series = self.series_col[imdb_id]
         return series

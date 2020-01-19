@@ -20,12 +20,34 @@ class Series(Collection):
     }
 
 
+class Seasons(Collection):
+    _fields = {
+        "description": Field(),
+    }
+
+
+class Episodes(Collection):
+    _fields = {
+        "number": Field(),
+    }
+
+
 class Follows(Edges):
     _fields = {
         "start_date": Field()
     }
 
 
+class Includes(Edges):
+    _fields = {}
+
+
+class Contains(Edges):
+    _fields = {}
+
+
 class SeriesGraph(Graph):
-    _edgeDefinitions = [EdgeDefinition("Follows", fromCollections=["Users"], toCollections=["Series"])]
+    _edgeDefinitions = [EdgeDefinition("Follows", fromCollections=["Users"], toCollections=["Series"]),
+                        EdgeDefinition("Includes", fromCollections=["Series"], toCollections=["Seasons"]),
+                        EdgeDefinition("Contains", fromCollections=["Seasons"], toCollections=["Episodes"])]
     _orphanedCollections = []
