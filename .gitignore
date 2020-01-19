@@ -4,6 +4,7 @@
 # App
 env-file
 .env
+arangodb/
 
 ### Python ###
 # Byte-compiled / optimized / DLL files

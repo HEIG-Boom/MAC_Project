@@ -21,18 +21,21 @@ Les commandes suivantes sont alors utilisables (aide disponible avec la commande
 - /follow
 - /followed
 
+Pour les admins, l'interface ArangoDB en ligne est accessible à [cette addresse](http://teleshows.travelbook.beer:8529).
+
 ## Setup pour le développement
 
 1. Créer un bot à l'aide du BotFather et copier l'API Token.
 2. Nous utilisons [cette API](https://rapidapi.com/imdb/api/movie-database-imdb-alternative/endpoints) afin de livrer des données riches et actuelles aux utilisateurs.
-2. Créer un fichier `.env` dans le dossier `docker`.
-3. Remplir ce fichier avec les variables nécessaires au fonctionnement du bot :
+3. Créer un fichier `.env` dans le dossier `docker`.
+4. Remplir ce fichier avec les variables nécessaires au fonctionnement du bot :
     - `TELEGRAM_TOKEN=<le token récupéré>`
     - `SERIES_API_TOKEN=<votre token pour l'api de séries>`
     - `DB_HOST=http://db:8529`
     - `ARANGO_PWD=<votre mot de passe root pour la donnée>`
-4. Se positionner dans le dossier `docker` et utiliser la commande `docker-compose up --build -d`.
-5. Le bot est maintenant "en ligne".
+5. Se positionner dans le dossier `docker` et utiliser la commande `docker-compose up --build -d`.
+6. Le bot est maintenant "en ligne".
+7. Vous pouvez accéder à l'interface de la base de données à l'addresse [http://localhost:8529](http://localhost:8529) avec l'utilisateur `root` et le mot de passe précédemment défini.
 
 ## Déploiement
 

@@ -46,8 +46,8 @@ class Database(object):
             self.db.createCollection(name="Includes", className='Edges')
         if not self.db.hasCollection("Contains"):
             self.db.createCollection(name="Contains", className='Edges')
-        if not self.db.hasCollection("Has_seen"):
-            self.db.createCollection(name="Has_seen", className='Edges')
+        if not self.db.hasCollection("HasSeen"):
+            self.db.createCollection(name="HasSeen", className='Edges')
 
         # Create the graph
         if not self.db.hasGraph("SeriesGraph"):
@@ -55,6 +55,7 @@ class Database(object):
         else:
             self.graph = self.db.graphs['SeriesGraph']
 
+        # Set collection as object properties to be easily accessed
         self.users_col = self.db['Users']
         self.series_col = self.db['Series']
         self.seasons_col = self.db['Seasons']
@@ -62,7 +63,7 @@ class Database(object):
         self.follows_edges = self.db['Follows']
         self.includes_edges = self.db['Includes']
         self.contains_edges = self.db['Contains']
-        self.has_seen_edges = self.db['Has_seen']
+        self.has_seen_edges = self.db['HasSeen']
 
     def add_user(self, telegram_id, telegram_username):
         """Add the telegram user in the database"""
@@ -136,7 +137,7 @@ class Database(object):
     def get_show_by_id(self, show_id):
         return self.series_col[show_id]
 
-    def get_seasons_by_serie_id(self, show_id):
+    def get_seasons_by_series_id(self, show_id):
         show = self.series_col[show_id]
 
         aql = "for season in Seasons for include in Includes filter include.`_from` == \"{}\" and include.`_to` == season.`_id` return season".format(show._id)
@@ -176,7 +177,7 @@ class Database(object):
 
         # TODO : Check if already seen
         # Link the new episode to the season of the show
-        self.graph.link('Has_seen', user, episode, {"date": date.today()})
+        self.graph.link('HasSeen', user, episode, {"date": date.today()})
 
     def get_progress(self, user_id, show_id):
         user = self.users_col[user_id]
