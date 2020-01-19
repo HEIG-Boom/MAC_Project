@@ -178,5 +178,26 @@ class Database(object):
         # Link the new episode to the season of the show
         self.graph.link('Has_seen', user, episode, {"date": date.today()})
 
+    def get_progress(self, user_id, show_id):
+        user = self.users_col[user_id]
+        show = self.series_col[show_id]
+
+        nb_seasons = len(self.get_seasons_by_serie_id(show_id))
+
+        # Init the dictionary with empty lists
+        resultsDict = {}
+        keys = range(1, nb_seasons + 1)
+        for i in keys:
+            resultsDict[i] = []
+
+        aql = "for watched in Has_seen filter watched.`_from` == \"{}\" and watched.`_to` like \"%{}.%\" return watched".format(user._id, show._key)
+        results = self.db.AQLQuery(aql, rawResults=False, batchSize=100)
+
+        for result in results:
+            token = result._to.split('.')
+            resultsDict[int(token[1])].append(token[2])
+
+        return resultsDict
+
     def __str__(self):
         return 'Database connection object'

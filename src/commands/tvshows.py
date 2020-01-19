@@ -58,6 +58,24 @@ def followed_series(update, context):
         update.message.reply_text("It seems that you don't follow any series")
 
 
+def show_progress(update, context):
+    user_id = update.message.chat.id
+
+    db = Database.instance()
+    series = db.followed_series(user_id)
+
+    button_list = [InlineKeyboardButton("{} ({})".format(show["title"], show["year"]),
+                                        callback_data="progress" + show["_key"]) for show in series]
+    # Create button menu
+    reply_markup = InlineKeyboardMarkup(build_menu(button_list, 1))
+
+    # Ask user to choose a show
+    if series:
+        update.message.reply_text("You are following these series :", reply_markup=reply_markup)
+    else:
+        update.message.reply_text("It seems that you don't follow any series")
+
+
 def handle_series(update, context):
     """Handle responses from the user when clicking menu buttons"""
     query = update.callback_query
@@ -160,6 +178,7 @@ def handle_log_episode(update, context):
     query = update.callback_query
     episode_id = query.data[10:]
     user_id = query.message.chat.id
+
     # Get episodes of the season
     db = Database.instance()
     db.has_seen(user_id, episode_id)
@@ -177,3 +196,25 @@ def handle_create_episode(update, context):
 
     # Link the new episode with the user (HAS_SEEN relation)
     handle_log_episode(update, context)
+
+
+def handle_progress(update, context):
+    query = update.callback_query
+    show_id = query.data[8:]
+    user_id = query.message.chat.id
+
+    # Get progress for one show
+    db = Database.instance()
+    progress = db.get_progress(user_id, show_id)
+    show = db.get_show_by_id(show_id)
+
+    text = 'Here is the resume for all seasons of *{}*\n\n'.format(show.title)
+    for season in progress:
+        text += 'Season {}: '.format(season)
+        tab = progress[season]
+        for ep in tab:
+            text += 'E{}/'.format(ep)
+        text = text[:-1]
+        text += '\n'
+
+    query.edit_message_text(text=text, parse_mode=ParseMode.MARKDOWN)
