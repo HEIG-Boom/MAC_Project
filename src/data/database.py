@@ -55,6 +55,7 @@ class Database(object):
         else:
             self.graph = self.db.graphs['SeriesGraph']
 
+        # Set collection as object properties to be easily accessed
         self.users_col = self.db['Users']
         self.series_col = self.db['Series']
         self.seasons_col = self.db['Seasons']
@@ -136,7 +137,7 @@ class Database(object):
     def get_show_by_id(self, show_id):
         return self.series_col[show_id]
 
-    def get_seasons_by_serie_id(self, show_id):
+    def get_seasons_by_series_id(self, show_id):
         show = self.series_col[show_id]
 
         aql = "for season in Seasons for include in Includes filter include.`_from` == \"{}\" and include.`_to` == season.`_id` return season".format(show._id)

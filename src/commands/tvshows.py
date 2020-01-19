@@ -118,7 +118,7 @@ def handle_get_seasons(update, context):
 
     # Get seasons of the show
     db = Database.instance()
-    seasons = db.get_seasons_by_serie_id(query.data[10:])
+    seasons = db.get_seasons_by_series_id(query.data[10:])
     series = db.get_show_by_id(query.data[10:])
 
     # Create button menu

@@ -3,13 +3,14 @@
 """
 Simple Bot developed in the MAC course that allows you to manage a tv shows history.
 Different actions are possible to interact with the tv shows database.
-See README.md and /help.
+See README.md and /help in the bot for more details.
 """
 import logging
 import os
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 from commands.bot import start, help_handle
-from commands.tvshows import search_series, followed_series, handle_series, handle_get_seasons, handle_is_watching, handle_log_episode, handle_create_episode, handle_cancel, handle_validate
+from commands.tvshows import search_series, followed_series, handle_series, handle_get_seasons, handle_is_watching, \
+    handle_log_episode, handle_create_episode, handle_cancel, handle_validate
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
