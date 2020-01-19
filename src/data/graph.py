@@ -40,6 +40,12 @@ class Follows(Edges):
     }
 
 
+class Has_seen(Edges):
+    _fields = {
+        "date": Field()
+    }
+
+
 class Includes(Edges):
     _fields = {}
 
@@ -51,5 +57,6 @@ class Contains(Edges):
 class SeriesGraph(Graph):
     _edgeDefinitions = [EdgeDefinition("Follows", fromCollections=["Users"], toCollections=["Series"]),
                         EdgeDefinition("Includes", fromCollections=["Series"], toCollections=["Seasons"]),
-                        EdgeDefinition("Contains", fromCollections=["Seasons"], toCollections=["Episodes"])]
+                        EdgeDefinition("Contains", fromCollections=["Seasons"], toCollections=["Episodes"]),
+                        EdgeDefinition("Has_seen", fromCollections=["Users"], toCollections=["Episodes"])]
     _orphanedCollections = []

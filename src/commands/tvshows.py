@@ -47,7 +47,7 @@ def followed_series(update, context):
     series = db.followed_series(user_id)
 
     button_list = [InlineKeyboardButton("{} ({})".format(show["title"], show["year"]),
-                                        callback_data="ww" + show["_key"]) for show in series]
+                                        callback_data="getSeasons" + show["_key"]) for show in series]
     # Create button menu
     reply_markup = InlineKeyboardMarkup(build_menu(button_list, 1))
 
@@ -75,26 +75,6 @@ def handle_series(update, context):
                                                                                         show_details["Year"],
                                                                                         show_details["Plot"],
                                                                                         show_details["Actors"])
-    query.edit_message_text(new_text, parse_mode=ParseMode.MARKDOWN, reply_markup=reply_markup)
-
-
-def handle_watched(update, context):
-    """Handle responses from the user when he choose one of the followed show"""
-    query = update.callback_query
-    series_id = query.data[2:]
-
-    # Get details about the series
-    db = Database.instance()
-    series = db.get_show_by_id(series_id)
-
-    # Create button menu
-    button_list = [InlineKeyboardButton("I've seen a episode", callback_data="getSeasons"+series_id)]
-    reply_markup = InlineKeyboardMarkup(build_menu(button_list, 1))
-
-    # Edit message text and ask user to choose a show
-    # TODO add all info in our arango DB (plot, actors, ...) and print it
-    new_text = "*{}* - {}".format(series["title"],
-                                  series["year"])
     query.edit_message_text(new_text, parse_mode=ParseMode.MARKDOWN, reply_markup=reply_markup)
 
 
@@ -133,18 +113,67 @@ def handle_validate(update, context):
 
 
 def handle_get_seasons(update, context):
-    """Handle responses from the user when clicking menu buttons"""
+    """Handle selection of the watched season of a show"""
     query = update.callback_query
 
     # Get seasons of the show
     db = Database.instance()
     seasons = db.get_seasons_by_serie_id(query.data[10:])
+    series = db.get_show_by_id(query.data[10:])
 
     # Create button menu
     button_list = [InlineKeyboardButton("Season {}".format(season["number"]),
-                                        callback_data="cancel") for season in seasons]
+                                        callback_data="isWatching" + season["_key"]) for season in seasons]
     button_list.append(InlineKeyboardButton("Cancel", callback_data="cancel"))
 
     reply_markup = InlineKeyboardMarkup(build_menu(button_list, 2))
 
-    query.edit_message_text(text="Select the season that you watched :", reply_markup=reply_markup)
+    # Edit message text and ask user to choose a season
+    # TODO add all info in our arango DB (plot, actors, ...) and print it
+    new_text = "*{}* - {}\n\nSelect the season that you watched :".format(series["title"], series["year"])
+    query.edit_message_text(new_text, parse_mode=ParseMode.MARKDOWN, reply_markup=reply_markup)
+
+
+def handle_is_watching(update, context):
+    """Handle selection of the watched episode of a season of a show"""
+    query = update.callback_query
+    season_id = query.data[10:]
+
+    # Get episodes of the season
+    db = Database.instance()
+    episodes = db.get_episodes_by_season_id(season_id)
+    nb_episodes = len(episodes)
+
+    # Create button menu
+    button_list = [InlineKeyboardButton("Episode {}".format(episode["number"]),
+                                        callback_data="logEpisode" + episode["_key"]) for episode in episodes]
+    button_list.append(InlineKeyboardButton("Episode {}".format(nb_episodes + 1),
+                                            callback_data="makeAndLog" + season_id + '.' + str(nb_episodes + 1)))
+    button_list.append(InlineKeyboardButton("Cancel", callback_data="cancel"))
+
+    reply_markup = InlineKeyboardMarkup(build_menu(button_list, 2))
+
+    query.edit_message_text(text="Select the episode that you watched :", reply_markup=reply_markup)
+
+
+def handle_log_episode(update, context):
+    query = update.callback_query
+    episode_id = query.data[10:]
+    user_id = query.message.chat.id
+    # Get episodes of the season
+    db = Database.instance()
+    db.has_seen(user_id, episode_id)
+
+    query.edit_message_text(text="Your progress has been updated!")
+
+
+def handle_create_episode(update, context):
+    query = update.callback_query
+    episode_id = query.data[10:]
+
+    # Get episodes of the season
+    db = Database.instance()
+    db.add_episode(episode_id)
+
+    # Link the new episode with the user (HAS_SEEN relation)
+    handle_log_episode(update, context)

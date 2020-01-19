@@ -46,6 +46,8 @@ class Database(object):
             self.db.createCollection(name="Includes", className='Edges')
         if not self.db.hasCollection("Contains"):
             self.db.createCollection(name="Contains", className='Edges')
+        if not self.db.hasCollection("Has_seen"):
+            self.db.createCollection(name="Has_seen", className='Edges')
 
         # Create the graph
         if not self.db.hasGraph("SeriesGraph"):
@@ -60,6 +62,7 @@ class Database(object):
         self.follows_edges = self.db['Follows']
         self.includes_edges = self.db['Includes']
         self.contains_edges = self.db['Contains']
+        self.has_seen_edges = self.db['Has_seen']
 
     def add_user(self, telegram_id, telegram_username):
         """Add the telegram user in the database"""
@@ -139,6 +142,41 @@ class Database(object):
         aql = "for season in Seasons for include in Includes filter include.`_from` == \"{}\" and include.`_to` == season.`_id` return season".format(show._id)
         results = self.db.AQLQuery(aql, rawResults=False, batchSize=100)
         return results
+
+    def get_episodes_by_season_id(self, season_id):
+        season = self.seasons_col[season_id]
+
+        aql = "for episode in Episodes for contain in Contains filter contain.`_from` == \"{}\" and contain.`_to` == episode.`_id` return episode".format(season._id)
+        results = self.db.AQLQuery(aql, rawResults=False, batchSize=100)
+        return results
+
+    def add_episode(self, episode_id):
+        token = episode_id.split(".")
+
+        # Get the show to add description to the new Episode
+        show = self.series_col[token[0]]
+
+        # Get the season of the show to link the new episode
+        season = self.seasons_col[token[0] + '.' + token[1]]
+
+        # Create the new Episode
+        episode = self.episodes_col.createDocument({
+            "_key": episode_id,
+            "number": token[2],
+            "description": "Episode n°{} of the season {} of the '{}' show".format(token[2], token[1], show.title)
+        })
+        episode.save()
+
+        # Link the new episode to the season of the show
+        self.graph.link('Contains', season, episode, {})
+
+    def has_seen(self, user_id, episode_id):
+        user = self.users_col[user_id]
+        episode = self.episodes_col[episode_id]
+
+        # TODO : Check if already seen
+        # Link the new episode to the season of the show
+        self.graph.link('Has_seen', user, episode, {"date": date.today()})
 
     def __str__(self):
         return 'Database connection object'

@@ -9,7 +9,7 @@ import logging
 import os
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 from commands.bot import start, help_handle
-from commands.tvshows import search_series, followed_series, handle_series, handle_watched, handle_get_seasons, handle_cancel, handle_validate
+from commands.tvshows import search_series, followed_series, handle_series, handle_get_seasons, handle_is_watching, handle_log_episode, handle_create_episode, handle_cancel, handle_validate
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -32,9 +32,11 @@ def main():
 
     # Handle the response coming from a menu button
     dp.add_handler(CallbackQueryHandler(handle_series, pattern="^tt.*$"))
-    dp.add_handler(CallbackQueryHandler(handle_watched, pattern="^ww.*$"))
     dp.add_handler(CallbackQueryHandler(handle_validate, pattern="^vv.*$"))
     dp.add_handler(CallbackQueryHandler(handle_get_seasons, pattern="^getSeasons.*"))
+    dp.add_handler(CallbackQueryHandler(handle_is_watching, pattern="^isWatching.*"))
+    dp.add_handler(CallbackQueryHandler(handle_log_episode, pattern="^logEpisode.*"))
+    dp.add_handler(CallbackQueryHandler(handle_create_episode, pattern="^makeAndLog.*"))
     dp.add_handler(CallbackQueryHandler(handle_cancel, pattern="^cancel$"))
 
     # Log all errors
