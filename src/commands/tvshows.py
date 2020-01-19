@@ -88,7 +88,7 @@ def handle_watched(update, context):
     series = db.get_show_by_id(series_id)
 
     # Create button menu
-    button_list = [InlineKeyboardButton("I've seen a episode", callback_data="insertEpisode")]
+    button_list = [InlineKeyboardButton("I've seen a episode", callback_data="getSeasons"+series_id)]
     reply_markup = InlineKeyboardMarkup(build_menu(button_list, 1))
 
     # Edit message text and ask user to choose a show
@@ -132,6 +132,19 @@ def handle_validate(update, context):
     query.edit_message_text(text, parse_mode=ParseMode.MARKDOWN)
 
 
-def handle_insertion(update, context):
+def handle_get_seasons(update, context):
+    """Handle responses from the user when clicking menu buttons"""
     query = update.callback_query
-    query.edit_message_text(text="Enter the episode you just see.\n\nPlease respect the format S1E2 (for Season 1 Episode 2).")
+
+    # Get seasons of the show
+    db = Database.instance()
+    seasons = db.get_seasons_by_serie_id(query.data[10:])
+
+    # Create button menu
+    button_list = [InlineKeyboardButton("Season {}".format(season["number"]),
+                                        callback_data="cancel") for season in seasons]
+    button_list.append(InlineKeyboardButton("Cancel", callback_data="cancel"))
+
+    reply_markup = InlineKeyboardMarkup(build_menu(button_list, 2))
+
+    query.edit_message_text(text="Select the season that you watched :", reply_markup=reply_markup)

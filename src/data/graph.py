@@ -22,6 +22,7 @@ class Series(Collection):
 
 class Seasons(Collection):
     _fields = {
+        "number": Field(),
         "description": Field(),
     }
 
@@ -29,6 +30,7 @@ class Seasons(Collection):
 class Episodes(Collection):
     _fields = {
         "number": Field(),
+        "description": Field(),
     }
 
 

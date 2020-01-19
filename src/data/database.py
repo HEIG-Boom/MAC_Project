@@ -96,6 +96,7 @@ class Database(object):
             for x in range(1, int(nb_season) + 1):
                 season = self.seasons_col.createDocument({
                     "_key": imdb_id + '.' + str(x),
+                    "number": x,
                     "description": "Season {} of the '{}' show".format(x, title)
                 })
                 season.save()
@@ -106,6 +107,7 @@ class Database(object):
                 # Create the first episode for the current season
                 episode = self.episodes_col.createDocument({
                     "_key": season['_key'] + '.1',
+                    "number": 1,
                     "description": "First episode of the season {} of the '{}' show".format(x, title)
                 })
                 episode.save()
@@ -130,6 +132,13 @@ class Database(object):
 
     def get_show_by_id(self, show_id):
         return self.series_col[show_id]
+
+    def get_seasons_by_serie_id(self, show_id):
+        show = self.series_col[show_id]
+
+        aql = "for season in Seasons for include in Includes filter include.`_from` == \"{}\" and include.`_to` == season.`_id` return season".format(show._id)
+        results = self.db.AQLQuery(aql, rawResults=False, batchSize=100)
+        return results
 
     def __str__(self):
         return 'Database connection object'
