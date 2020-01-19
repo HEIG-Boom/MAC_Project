@@ -46,8 +46,8 @@ class Database(object):
             self.db.createCollection(name="Includes", className='Edges')
         if not self.db.hasCollection("Contains"):
             self.db.createCollection(name="Contains", className='Edges')
-        if not self.db.hasCollection("Has_seen"):
-            self.db.createCollection(name="Has_seen", className='Edges')
+        if not self.db.hasCollection("HasSeen"):
+            self.db.createCollection(name="HasSeen", className='Edges')
 
         # Create the graph
         if not self.db.hasGraph("SeriesGraph"):
@@ -63,7 +63,7 @@ class Database(object):
         self.follows_edges = self.db['Follows']
         self.includes_edges = self.db['Includes']
         self.contains_edges = self.db['Contains']
-        self.has_seen_edges = self.db['Has_seen']
+        self.has_seen_edges = self.db['HasSeen']
 
     def add_user(self, telegram_id, telegram_username):
         """Add the telegram user in the database"""
@@ -177,7 +177,7 @@ class Database(object):
 
         # TODO : Check if already seen
         # Link the new episode to the season of the show
-        self.graph.link('Has_seen', user, episode, {"date": date.today()})
+        self.graph.link('HasSeen', user, episode, {"date": date.today()})
 
     def __str__(self):
         return 'Database connection object'
