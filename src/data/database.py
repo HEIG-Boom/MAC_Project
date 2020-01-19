@@ -124,8 +124,12 @@ class Database(object):
         return series
 
     def follow_series(self, user, series):
-        # TODO Check if the link already exists !
-        self.graph.link('Follows', user, series, {"start_date": date.today()})
+        already_exist = self.check_if_exist("Follows", user, series)
+        if not already_exist:
+            self.graph.link('Follows', user, series, {"start_date": date.today()})
+            return True
+        else:
+            return False
 
     def followed_series(self, user_id):
         user = self.users_col[user_id]
@@ -174,16 +178,19 @@ class Database(object):
     def has_seen(self, user_id, episode_id):
         user = self.users_col[user_id]
         episode = self.episodes_col[episode_id]
-
-        # TODO : Check if already seen
-        # Link the new episode to the season of the show
-        self.graph.link('HasSeen', user, episode, {"date": date.today()})
+        already_exist = self.check_if_exist("HasSeen", user, episode)
+        if not already_exist:
+            # Link the new episode to the season of the show
+            self.graph.link('HasSeen', user, episode, {"date": date.today()})
+            return True
+        else:
+            return False
 
     def get_progress(self, user_id, show_id):
         user = self.users_col[user_id]
         show = self.series_col[show_id]
 
-        nb_seasons = len(self.get_seasons_by_serie_id(show_id))
+        nb_seasons = len(self.get_seasons_by_series_id(show_id))
 
         # Init the dictionary with empty lists
         resultsDict = {}
@@ -191,7 +198,7 @@ class Database(object):
         for i in keys:
             resultsDict[i] = []
 
-        aql = "for watched in Has_seen filter watched.`_from` == \"{}\" and watched.`_to` like \"%{}.%\" return watched".format(user._id, show._key)
+        aql = "for watched in HasSeen filter watched.`_from` == \"{}\" and watched.`_to` like \"%{}.%\" return watched".format(user._id, show._key)
         results = self.db.AQLQuery(aql, rawResults=False, batchSize=100)
 
         for result in results:
@@ -199,6 +206,11 @@ class Database(object):
             resultsDict[int(token[1])].append(token[2])
 
         return resultsDict
+
+    def check_if_exist(self, collectionName, fromElement, toElement):
+        aql = "for link in {} filter link.`_from` == \"{}\" and link.`_to` == \"{}\" return link".format(collectionName, fromElement._id, toElement._id)
+        results = self.db.AQLQuery(aql, rawResults=False, batchSize=100)
+        return results
 
     def __str__(self):
         return 'Database connection object'

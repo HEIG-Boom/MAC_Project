@@ -123,10 +123,11 @@ def handle_validate(update, context):
     user = db.users_col[user_id]
 
     # Create an edge between the documents
-    db.follow_series(user, series)
-
-    # Send success message
-    text = "You are now following *{}*[.]({})".format(show_details["Title"], show_details["Poster"])
+    if db.follow_series(user, series):
+        # Send success message
+        text = "You are now following *{}*[.]({})".format(show_details["Title"], show_details["Poster"])
+    else:
+        text = "You already follow this *{}*. You can see the series you are following by the /followes command.".format(show_details["Title"])
     query.edit_message_text(text, parse_mode=ParseMode.MARKDOWN)
 
 
@@ -181,9 +182,10 @@ def handle_log_episode(update, context):
 
     # Get episodes of the season
     db = Database.instance()
-    db.has_seen(user_id, episode_id)
-
-    query.edit_message_text(text="Your progress has been updated!")
+    if db.has_seen(user_id, episode_id):
+        query.edit_message_text(text="Your progress has been updated!")
+    else:
+        query.edit_message_text(text="You have already seen this episode! To check your progression type /progress")
 
 
 def handle_create_episode(update, context):
@@ -208,13 +210,18 @@ def handle_progress(update, context):
     progress = db.get_progress(user_id, show_id)
     show = db.get_show_by_id(show_id)
 
-    text = 'Here is the resume for all seasons of *{}*\n\n'.format(show.title)
+    header = 'Here is the resume for all seasons of *{}*\n\n'.format(show.title)
+    text = ''
     for season in progress:
-        text += 'Season {}: '.format(season)
         tab = progress[season]
+        if tab:
+            text += 'Season {}: '.format(season)
         for ep in tab:
             text += 'E{}/'.format(ep)
         text = text[:-1]
         text += '\n'
 
-    query.edit_message_text(text=text, parse_mode=ParseMode.MARKDOWN)
+    if text == '\n':
+        text = "It seems that you haven't seen an episode!"
+
+    query.edit_message_text(text=header + text, parse_mode=ParseMode.MARKDOWN)
