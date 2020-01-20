@@ -16,8 +16,8 @@ def start(update, context):
     db.add_user(user_id, username)
 
     update.message.reply_text(
-        'Hi 👋\n\nI\'m the bot that keeps track of your viewing history. You can search for a show you\'re '
-        'interested in and keep track of the episodes. For more info, type /help for the command list.',
+        'Hi 👋\n\nI\'m the bot that keeps track of your viewing history.\nYou can search for a show you\'re '
+        'interested in and keep track of the episodes.\nFor more info, type /help for the command list.',
     )
 
 
@@ -26,12 +26,12 @@ def help_handle(update, context):
     update.message.reply_text(
         'Here is the list of possible commands\n\n'
         '*General* 🐒\n'
-        '/start - start the bot\n'
-        '/help - get info on how to use the bot\n\n'
+        '/start - Start the bot\n'
+        '/help - Get info on how to use the bot\n\n'
         '*TV shows* 🎬\n'
         '/follow <term> - Search series that contain the given term\n'
         '/followed - Display the shows you follow\n'
-        '/progress - To see witch episode you already seen\n'
-        '/friends - To get a list of the users that have the most series in common with you\n',
+        '/progress - See your progress in terms of episodes\n'
+        '/friends - Find the users that have the most series in common with you\n',
         parse_mode=ParseMode.MARKDOWN
     )
