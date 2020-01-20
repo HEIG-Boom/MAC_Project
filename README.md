@@ -16,12 +16,12 @@ Dans Telegram, chercher le bot `@TeleShows_Bot`, et lancer une conversation.
 
 Les commandes suivantes sont alors utilisables (aide disponible avec la commande `/help`) :
 
-- /start
-- /help
-- /follow
-- /followed
-- /progress
-- /friends
+- `/start` : start the bot 
+- `/help` : get info on how to use the bot
+- `/follow` : Search series that contain the term you specified after the command
+- `/followed` : Display the shows you follow and mark an episode as seen
+- `/progres` : See your progress in terms of episodes
+- `/friends` : Find the users that have the most series in common with you
 
 Pour les admins, l'interface ArangoDB en ligne est accessible à [cette addresse](http://teleshows.travelbook.beer:8529).
 
