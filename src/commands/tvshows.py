@@ -53,9 +53,9 @@ def followed_series(update, context):
 
     # Ask user to choose a show
     if series:
-        update.message.reply_text("You are following these series :", reply_markup=reply_markup)
+        update.message.reply_text("You are following these series:", reply_markup=reply_markup)
     else:
-        update.message.reply_text("It seems that you don't follow any series")
+        update.message.reply_text("It seems like you don't follow any series")
 
 
 def show_progress(update, context):
@@ -64,16 +64,34 @@ def show_progress(update, context):
     db = Database.instance()
     series = db.followed_series(user_id)
 
-    button_list = [InlineKeyboardButton("{} ({})".format(show["title"], show["year"]),
-                                        callback_data="progress" + show["_key"]) for show in series]
+    button_list = [InlineKeyboardButton("{} ({})".format(show['title'], show['year']),
+                                        callback_data="progress" + show['_key']) for show in series]
     # Create button menu
     reply_markup = InlineKeyboardMarkup(build_menu(button_list, 1))
 
     # Ask user to choose a show
     if series:
-        update.message.reply_text("You are following these series :", reply_markup=reply_markup)
+        update.message.reply_text("You are following these series:", reply_markup=reply_markup)
     else:
-        update.message.reply_text("It seems that you don't follow any series")
+        update.message.reply_text("It seems like you don't follow any series.")
+
+
+def show_friends(update, context):
+    """Display the five users with the most series in common"""
+    user_id = update.message.chat.id
+
+    db = Database.instance()
+    friends = db.get_friends(user_id)
+
+    if friends:
+        # friends_str = ""
+
+        # for friend in friends:
+        #     friends_str += "- *{}* series in common with @{}\n".format(friend['nbInCommon'], friend['user'])
+
+        update.message.reply_text("You have:\n\n" + str(friends), parse_mode=ParseMode.MARKDOWN)
+    else:
+        update.message.reply_text("No one follows the same series you do yet.")
 
 
 def handle_series(update, context):
@@ -127,7 +145,9 @@ def handle_validate(update, context):
         # Send success message
         text = "You are now following *{}*[.]({})".format(show_details["Title"], show_details["Poster"])
     else:
-        text = "You already follow this *{}*. You can see the series you are following by the /followes command.".format(show_details["Title"])
+        text = "You already follow this *{}*. You can see the series you are following using the /followed command." \
+            .format(show_details["Title"])
+
     query.edit_message_text(text, parse_mode=ParseMode.MARKDOWN)
 
 
@@ -149,7 +169,7 @@ def handle_get_seasons(update, context):
 
     # Edit message text and ask user to choose a season
     # TODO add all info in our arango DB (plot, actors, ...) and print it
-    new_text = "*{}* - {}\n\nSelect the season that you watched :".format(series["title"], series["year"])
+    new_text = "*{}* - {}\n\nSelect the season that you watched:".format(series["title"], series["year"])
     query.edit_message_text(new_text, parse_mode=ParseMode.MARKDOWN, reply_markup=reply_markup)
 
 
@@ -172,7 +192,7 @@ def handle_is_watching(update, context):
 
     reply_markup = InlineKeyboardMarkup(build_menu(button_list, 2))
 
-    query.edit_message_text(text="Select the episode that you watched :", reply_markup=reply_markup)
+    query.edit_message_text(text="Select the episode that you watched:", reply_markup=reply_markup)
 
 
 def handle_log_episode(update, context):
@@ -185,7 +205,7 @@ def handle_log_episode(update, context):
     if db.has_seen(user_id, episode_id):
         query.edit_message_text(text="Your progress has been updated!")
     else:
-        query.edit_message_text(text="You have already seen this episode! To check your progression type /progress")
+        query.edit_message_text(text="You have already seen this episode!\nTo check your progression type /progress.")
 
 
 def handle_create_episode(update, context):
@@ -210,7 +230,7 @@ def handle_progress(update, context):
     progress = db.get_progress(user_id, show_id)
     show = db.get_show_by_id(show_id)
 
-    header = 'Here is the resume for all seasons of *{}*\n\n'.format(show.title)
+    header = 'Here is the summary for all seasons of *{}*\n\n'.format(show.title)
     text = ''
     for season in progress:
         tab = progress[season]
@@ -222,6 +242,6 @@ def handle_progress(update, context):
         text += '\n'
 
     if text == '\n':
-        text = "It seems that you haven't seen an episode!"
+        text = "It seems like you haven't seen any episode!"
 
     query.edit_message_text(text=header + text, parse_mode=ParseMode.MARKDOWN)

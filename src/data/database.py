@@ -193,22 +193,40 @@ class Database(object):
         nb_seasons = len(self.get_seasons_by_series_id(show_id))
 
         # Init the dictionary with empty lists
-        resultsDict = {}
+        results_dict = {}
         keys = range(1, nb_seasons + 1)
         for i in keys:
-            resultsDict[i] = []
+            results_dict[i] = []
 
-        aql = "for watched in HasSeen filter watched.`_from` == \"{}\" and watched.`_to` like \"%{}.%\" return watched".format(user._id, show._key)
+        aql = "for watched in HasSeen filter watched.`_from` == \"{}\" and watched.`_to` like \"%{}.%\" return watched" \
+            .format(user._id, show._key)
         results = self.db.AQLQuery(aql, rawResults=False, batchSize=100)
 
         for result in results:
             token = result._to.split('.')
-            resultsDict[int(token[1])].append(token[2])
+            results_dict[int(token[1])].append(token[2])
 
-        return resultsDict
+        return results_dict
 
-    def check_if_exist(self, collectionName, fromElement, toElement):
-        aql = "for link in {} filter link.`_from` == \"{}\" and link.`_to` == \"{}\" return link".format(collectionName, fromElement._id, toElement._id)
+    def get_friends(self, user_id):
+        """Get five users with the most series in common"""
+        # Graph traversal query
+        aql = ("FOR v IN 2..2 ANY"
+               "  'Users/" + str(user_id) + "'"
+               "  GRAPH 'SeriesGraph'"
+               "  FILTER CONTAINS(v._id, 'Users/')"
+               "  COLLECT user = v WITH COUNT INTO nbSeriesInCommon"
+               "  FILTER nbSeriesInCommon > 0"
+               "  SORT nbSeriesInCommon DESC"
+               "  LIMIT 5"
+               "  RETURN { 'user': user.username, 'nbInCommon': nbSeriesInCommon }")
+
+        results = self.db.AQLQuery(aql, rawResults=True)
+        return results
+
+    def check_if_exist(self, collection_name, from_element, to_element):
+        aql = "for link in {} filter link.`_from` == \"{}\" and link.`_to` == \"{}\" return link"\
+            .format(collection_name, from_element._id, to_element._id)
         results = self.db.AQLQuery(aql, rawResults=False, batchSize=100)
         return results
 

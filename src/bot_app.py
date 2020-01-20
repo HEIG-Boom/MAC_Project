@@ -10,7 +10,8 @@ import os
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 from commands.bot import start, help_handle
 from commands.tvshows import search_series, followed_series, handle_series, handle_get_seasons, handle_is_watching, \
-    handle_log_episode, handle_create_episode, handle_cancel, handle_validate, show_progress, handle_progress
+    handle_log_episode, handle_create_episode, handle_cancel, handle_validate, show_progress, handle_progress, \
+    show_friends
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -28,9 +29,10 @@ def main():
     # On different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", help_handle))
+    dp.add_handler(CommandHandler("follow", search_series, pass_args=True))
     dp.add_handler(CommandHandler("followed", followed_series))
     dp.add_handler(CommandHandler("progress", show_progress))
-    dp.add_handler(CommandHandler("follow", search_series, pass_args=True))
+    dp.add_handler(CommandHandler("friends", show_friends))
 
     # Handle the response coming from a menu button
     dp.add_handler(CallbackQueryHandler(handle_series, pattern="^tt.*$"))
@@ -56,7 +58,7 @@ def main():
 
 def error(update, context):
     """Log Errors caused by Updates."""
-    logger.warning('Update "%s" caused error "%s"', update, context.error)
+    logger.warning('Update "%s"\ncaused error: "%s"', update, context.error)
 
 
 if __name__ == '__main__':

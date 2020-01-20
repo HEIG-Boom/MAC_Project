@@ -12,7 +12,7 @@ Ces interactions seront faites via un bot Telegram. Plusieurs commandes permettr
 
 ## Utiliser le bot
 
-Dans Telegram, chercher le bot `@MacBotBotMacBot`, et lancer une conversation.
+Dans Telegram, chercher le bot `@TeleShows_Bot`, et lancer une conversation.
 
 Les commandes suivantes sont alors utilisables (aide disponible avec la commande `/help`) :
 
@@ -20,6 +20,8 @@ Les commandes suivantes sont alors utilisables (aide disponible avec la commande
 - /help
 - /follow
 - /followed
+- /progress
+- /friends
 
 Pour les admins, l'interface ArangoDB en ligne est accessible à [cette addresse](http://teleshows.travelbook.beer:8529).
 

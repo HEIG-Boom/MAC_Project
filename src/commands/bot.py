@@ -32,5 +32,6 @@ def help_handle(update, context):
         '/follow <term> - Search series that contain the given term\n'
         '/followed - Display the shows you follow\n'
         '/progress - To see witch episode you already seen\n',
+        '/friends - To get a list of the users that have the most series in common with you\n',
         parse_mode=telegram.ParseMode.MARKDOWN
     )
