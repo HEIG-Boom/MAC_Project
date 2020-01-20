@@ -3,7 +3,7 @@
 """
 Handles all commands directly related to the bot as 'help', 'start', commands.
 """
-import telegram
+from telegram import ParseMode
 from data.database import Database
 
 
@@ -31,7 +31,7 @@ def help_handle(update, context):
         '*TV shows* 🎬\n'
         '/follow <term> - Search series that contain the given term\n'
         '/followed - Display the shows you follow\n'
-        '/progress - To see witch episode you already seen\n',
+        '/progress - To see witch episode you already seen\n'
         '/friends - To get a list of the users that have the most series in common with you\n',
-        parse_mode=telegram.ParseMode.MARKDOWN
+        parse_mode=ParseMode.MARKDOWN
     )
