@@ -84,12 +84,17 @@ def show_friends(update, context):
     friends = db.get_friends(user_id)
 
     if friends:
-        # friends_str = ""
+        # Hack because pyArango makes weird things
+        friends_str = ""
 
-        # for friend in friends:
-        #     friends_str += "- *{}* series in common with @{}\n".format(friend['nbInCommon'], friend['user'])
+        for friend in friends:
+            if friend:
+                friends_str += "- {} series in common with @{}\n".format(friend['nbInCommon'], friend['user'])
+            else:
+                break
 
-        update.message.reply_text("You have:\n\n" + str(friends), parse_mode=ParseMode.MARKDOWN)
+        print(friends_str)
+        update.message.reply_text("You have:\n\n" + friends_str)
     else:
         update.message.reply_text("No one follows the same series you do yet.")
 
