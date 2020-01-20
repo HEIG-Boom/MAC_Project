@@ -93,7 +93,6 @@ def show_friends(update, context):
             else:
                 break
 
-        print(friends_str)
         update.message.reply_text("You have:\n\n" + friends_str)
     else:
         update.message.reply_text("No one follows the same series you do yet.")
