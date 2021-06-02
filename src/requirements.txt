@@ -12,5 +12,5 @@ pytz==2019.3
 requests==2.22.0
 six==1.13.0
 tornado==6.0.3
-urllib3==1.25.7
+urllib3==1.26.5
 zope.interface==4.7.1
